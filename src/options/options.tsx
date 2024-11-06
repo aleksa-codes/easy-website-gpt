@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export function Options() {
   const [apiKey, setApiKey] = useState('');
+  const [inputValue, setInputValue] = useState('');
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const { toast } = useToast();
@@ -21,13 +22,14 @@ export function Options() {
       const savedKey = await getApiKey();
       if (savedKey) {
         setApiKey(savedKey);
+        setInputValue(savedKey);
       }
     };
     loadApiKey();
   }, []);
 
   const handleKeyChange = (value: string) => {
-    setApiKey(value);
+    setInputValue(value);
     if (showError) {
       setShowError(false);
       setErrorMessage('');
@@ -35,7 +37,7 @@ export function Options() {
   };
 
   const handleSaveKey = async () => {
-    const trimmedKey = apiKey.trim();
+    const trimmedKey = inputValue.trim();
 
     if (trimmedKey.length === 0) {
       setShowError(true);
@@ -50,6 +52,7 @@ export function Options() {
     }
 
     await saveApiKey(trimmedKey);
+    setApiKey(trimmedKey);
     toast({
       title: 'API Key saved successfully',
       description: 'You can now start chatting with any webpage',
@@ -62,6 +65,7 @@ export function Options() {
   const handleRemoveKey = async () => {
     await saveApiKey('');
     setApiKey('');
+    setInputValue('');
     toast({
       title: 'API Key removed',
       description: 'Your API key has been removed from storage',
@@ -94,18 +98,18 @@ export function Options() {
                     href='https://platform.openai.com/api-keys'
                     target='_blank'
                     rel='noopener noreferrer'
-                    className='inline-flex items-center rounded-full border border-input bg-background px-4 py-2 text-sm font-medium transition-all hover:scale-105 hover:shadow-md'
+                    className='inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-2 text-sm font-medium text-primary transition-all hover:bg-primary/20'
                   >
-                    <ExternalLink className='mr-2 h-4 w-4' />
+                    <ExternalLink className='h-4 w-4' />
                     Get API Key
                   </a>
                   <a
                     href='https://github.com/aleksa-codes/easy-website-gpt'
                     target='_blank'
                     rel='noopener noreferrer'
-                    className='inline-flex items-center rounded-full border border-input bg-background px-4 py-2 text-sm font-medium transition-all hover:scale-105 hover:shadow-md'
+                    className='inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-2 text-sm font-medium text-primary transition-all hover:bg-primary/20'
                   >
-                    <ExternalLink className='mr-2 h-4 w-4' />
+                    <ExternalLink className='h-4 w-4' />
                     View Source
                   </a>
                 </div>
@@ -122,27 +126,27 @@ export function Options() {
                   <Input
                     id='apiKey'
                     type='password'
-                    value={apiKey}
+                    value={inputValue}
                     onChange={(e) => handleKeyChange(e.target.value)}
                     placeholder='sk-...'
-                    className='flex-1 font-mono text-sm shadow-sm transition-colors focus-visible:ring-primary/50'
+                    className='flex-1 rounded-full border-muted-foreground/20 bg-muted/50 font-mono text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus-visible:border-primary/50 focus-visible:ring-primary/50'
                   />
                   <Button
                     onClick={handleSaveKey}
-                    className='shrink-0 rounded-full transition-all hover:scale-105 hover:shadow-md'
-                    disabled={showError}
+                    className='shrink-0 rounded-full px-4 transition-all hover:scale-105 hover:shadow-md'
+                    disabled={!inputValue.trim() || inputValue === apiKey}
                   >
                     <Key className='mr-2 h-4 w-4' />
                     Save Key
                   </Button>
                   <Button
                     onClick={handleRemoveKey}
-                    variant='destructive'
-                    className='shrink-0 rounded-full transition-all hover:scale-105 hover:shadow-md'
+                    variant='ghost'
+                    className='shrink-0 gap-1.5 rounded-full px-2.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
                     disabled={!apiKey}
                   >
                     <Trash2 className='mr-2 h-4 w-4' />
-                    Remove Key
+                    Remove
                   </Button>
                 </div>
                 <AnimatePresence>
@@ -159,8 +163,8 @@ export function Options() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-                <Card className='rounded-lg bg-muted/50 p-4'>
-                  <p className='text-sm leading-relaxed'>
+                <Card className='rounded-lg border-primary/10 bg-primary/5 p-4'>
+                  <p className='text-sm leading-relaxed text-muted-foreground'>
                     Your API key is stored locally in your browser and is only used to communicate with OpenAI's
                     servers. We never store or transmit your API key to any other servers.
                   </p>
@@ -171,7 +175,7 @@ export function Options() {
         </motion.div>
 
         <motion.div
-          className='text-center text-sm text-muted-foreground/60'
+          className='text-center text-sm'
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -180,7 +184,7 @@ export function Options() {
             href='https://github.com/aleksa-codes'
             target='_blank'
             rel='noopener noreferrer'
-            className='transition-colors duration-200 hover:text-primary'
+            className='text-muted-foreground/60 transition-colors duration-200 hover:text-primary'
           >
             created by <span className='font-semibold'>aleksa.codes</span>
           </a>
