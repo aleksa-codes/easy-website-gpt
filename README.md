@@ -2,7 +2,7 @@
 
 Easy WebsiteGPT is a Chrome extension that allows you to chat with any webpage using OpenAI's GPT model. Simply install the extension, add your OpenAI API key, and start asking questions about the content of any webpage you're viewing.
 
-![Easy WebsiteGPT Demo](demo.gif)
+![Easy WebsiteGPT Screenshot](/public/screenshot.png)
 
 ## ✨ Features
 
