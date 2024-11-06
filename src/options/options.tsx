@@ -10,9 +10,10 @@ import { isValidOpenAIKey } from '@/lib/validate';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export function OptionsPage() {
+export function Options() {
   const [apiKey, setApiKey] = useState('');
   const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -27,21 +28,35 @@ export function OptionsPage() {
 
   const handleKeyChange = (value: string) => {
     setApiKey(value);
-    setShowError(value.length > 0 && !isValidOpenAIKey(value));
+    if (showError) {
+      setShowError(false);
+      setErrorMessage('');
+    }
   };
 
   const handleSaveKey = async () => {
-    if (!apiKey || isValidOpenAIKey(apiKey)) {
-      await saveApiKey(apiKey);
-      toast({
-        title: 'API Key saved successfully',
-        description: 'You can now start chatting with any webpage',
-        duration: 2000,
-      });
-      setShowError(false);
-    } else {
+    const trimmedKey = apiKey.trim();
+
+    if (trimmedKey.length === 0) {
       setShowError(true);
+      setErrorMessage('API key cannot be empty');
+      return;
     }
+
+    if (!isValidOpenAIKey(trimmedKey)) {
+      setShowError(true);
+      setErrorMessage('Invalid API key format. Please enter a valid OpenAI API key');
+      return;
+    }
+
+    await saveApiKey(trimmedKey);
+    toast({
+      title: 'API Key saved successfully',
+      description: 'You can now start chatting with any webpage',
+      duration: 2000,
+    });
+    setShowError(false);
+    setErrorMessage('');
   };
 
   const handleRemoveKey = async () => {
@@ -124,6 +139,7 @@ export function OptionsPage() {
                     onClick={handleRemoveKey}
                     variant='destructive'
                     className='shrink-0 rounded-full transition-all hover:scale-105 hover:shadow-md'
+                    disabled={!apiKey}
                   >
                     <Trash2 className='mr-2 h-4 w-4' />
                     Remove Key
@@ -138,9 +154,7 @@ export function OptionsPage() {
                     >
                       <Alert variant='destructive' className='mt-2'>
                         <AlertCircle className='h-4 w-4' />
-                        <AlertDescription>
-                          Invalid API key format. It should start with 'sk-' followed by at least 32 characters.
-                        </AlertDescription>
+                        <AlertDescription>{errorMessage}</AlertDescription>
                       </Alert>
                     </motion.div>
                   )}
