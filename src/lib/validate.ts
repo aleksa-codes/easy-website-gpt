@@ -1,4 +1,4 @@
 export const isValidOpenAIKey = (key: string): boolean => {
-  const pattern = /^sk-[A-Za-z0-9-]{48,}$/;
+  const pattern = /^sk-[a-zA-Z0-9-_]{1,250}$/;
   return pattern.test(key);
 };
