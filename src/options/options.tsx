@@ -8,7 +8,7 @@ import { AlertCircle, Key, Trash2, Bot, ExternalLink } from 'lucide-react';
 import { saveApiKey, getApiKey } from '@/lib/storage';
 import { isValidOpenAIKey } from '@/lib/validate';
 import { useToast } from '@/hooks/use-toast';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 export function Options() {
   const [apiKey, setApiKey] = useState('');
