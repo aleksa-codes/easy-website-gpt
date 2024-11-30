@@ -14,7 +14,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { isValidOpenAIKey } from '@/lib/validate';
 import { useState, useEffect } from 'react';
 import { saveApiKey } from '@/lib/storage';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import { useToast } from '@/hooks/use-toast';
 
 interface SettingsDialogProps {

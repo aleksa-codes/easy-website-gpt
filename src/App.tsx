@@ -10,7 +10,7 @@ import { sendToOpenAI } from '@/lib/openai';
 import { ChatMessage } from '@/components/chat-message';
 import { SettingsDialog } from '@/components/settings-dialog';
 import { Card } from '@/components/ui/card';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 
 interface Message {
   role: 'user' | 'assistant';
