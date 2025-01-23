@@ -14,7 +14,7 @@ interface ChatMessageProps {
 
 const Link = ({ className, children, ...props }: HTMLProps<HTMLAnchorElement>) => (
   <a
-    className={cn('text-primary underline underline-offset-4 hover:text-primary/80', className)}
+    className={cn('text-primary hover:text-primary/80 underline underline-offset-4', className)}
     target='_blank'
     rel='noopener noreferrer'
     {...props}
@@ -54,17 +54,17 @@ const CodeBlock = ({
 const LoadingDots = () => (
   <div className='flex space-x-1.5'>
     <motion.span
-      className='h-2 w-2 rounded-full bg-primary/40'
+      className='bg-primary/40 h-2 w-2 rounded-full'
       animate={{ opacity: [0.4, 1, 0.4] }}
       transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
     />
     <motion.span
-      className='h-2 w-2 rounded-full bg-primary/40'
+      className='bg-primary/40 h-2 w-2 rounded-full'
       animate={{ opacity: [0.4, 1, 0.4] }}
       transition={{ duration: 1.4, delay: 0.2, repeat: Infinity, ease: 'easeInOut' }}
     />
     <motion.span
-      className='h-2 w-2 rounded-full bg-primary/40'
+      className='bg-primary/40 h-2 w-2 rounded-full'
       animate={{ opacity: [0.4, 1, 0.4] }}
       transition={{ duration: 1.4, delay: 0.4, repeat: Infinity, ease: 'easeInOut' }}
     />
@@ -85,12 +85,12 @@ export function ChatMessage({ role, content }: ChatMessageProps) {
     >
       {isAssistant && (
         <div className='mt-1 flex h-10 w-10 shrink-0'>
-          <Bot className='h-full w-full rounded-full bg-gradient-to-br from-primary/20 to-primary/10 p-2 text-primary' />
+          <Bot className='from-primary/20 to-primary/10 text-primary h-full w-full rounded-full bg-gradient-to-br p-2' />
         </div>
       )}
       <Card
         className={cn(
-          'max-w-[80%] break-words rounded-2xl px-4 py-3 shadow-sm transition-colors',
+          'max-w-[80%] rounded-2xl px-4 py-3 break-words shadow-sm transition-colors',
           {
             'bg-primary text-primary-foreground': !isAssistant,
             'bg-muted/50 hover:bg-muted/80': isAssistant,
@@ -103,7 +103,7 @@ export function ChatMessage({ role, content }: ChatMessageProps) {
             <LoadingDots />
           ) : (
             <MemoizedReactMarkdown
-              className='prose prose-sm max-w-none dark:prose-invert'
+              className='prose prose-sm dark:prose-invert prose-code:after:hidden prose-code:before:hidden max-w-none'
               rehypePlugins={[rehypeRaw, rehypeSanitize]}
               components={{
                 code: CodeBlock,
@@ -115,12 +115,12 @@ export function ChatMessage({ role, content }: ChatMessageProps) {
             </MemoizedReactMarkdown>
           )
         ) : (
-          <p className='whitespace-pre-wrap text-sm leading-relaxed'>{content}</p>
+          <p className='text-sm leading-relaxed whitespace-pre-wrap'>{content}</p>
         )}
       </Card>
       {!isAssistant && (
         <div className='mt-1 flex h-10 w-10 shrink-0'>
-          <User className='h-full w-full rounded-full bg-gradient-to-br from-primary to-primary/80 p-2 text-primary-foreground' />
+          <User className='from-primary to-primary/80 text-primary-foreground h-full w-full rounded-full bg-gradient-to-br p-2' />
         </div>
       )}
     </motion.div>

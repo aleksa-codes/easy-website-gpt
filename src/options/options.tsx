@@ -75,10 +75,10 @@ export function Options() {
   };
 
   return (
-    <div className='min-h-screen bg-background p-8'>
+    <div className='bg-background min-h-screen p-8'>
       <div className='mx-auto max-w-2xl space-y-8'>
         <motion.div className='flex items-center gap-3' initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
-          <Bot className='h-10 w-10 text-primary' />
+          <Bot className='text-primary h-10 w-10' />
           <h1 className='text-3xl font-bold tracking-tight'>Easy WebsiteGPT</h1>
         </motion.div>
 
@@ -98,7 +98,7 @@ export function Options() {
                     href='https://platform.openai.com/api-keys'
                     target='_blank'
                     rel='noopener noreferrer'
-                    className='inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-2 text-sm font-medium text-primary transition-all hover:bg-primary/20'
+                    className='bg-primary/10 text-primary hover:bg-primary/20 inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-all'
                   >
                     <ExternalLink className='h-4 w-4' />
                     Get API Key
@@ -107,7 +107,7 @@ export function Options() {
                     href='https://github.com/aleksa-codes/easy-website-gpt'
                     target='_blank'
                     rel='noopener noreferrer'
-                    className='inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-2 text-sm font-medium text-primary transition-all hover:bg-primary/20'
+                    className='bg-primary/10 text-primary hover:bg-primary/20 inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-medium transition-all'
                   >
                     <ExternalLink className='h-4 w-4' />
                     View Source
@@ -129,7 +129,7 @@ export function Options() {
                     value={inputValue}
                     onChange={(e) => handleKeyChange(e.target.value)}
                     placeholder='sk-...'
-                    className='flex-1 rounded-full border-muted-foreground/20 bg-muted/50 font-mono text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus-visible:border-primary/50 focus-visible:ring-primary/50'
+                    className='border-muted-foreground/20 bg-muted/50 placeholder:text-muted-foreground/50 focus-visible:border-primary/50 focus-visible:ring-primary/50 flex-1 rounded-full font-mono text-sm shadow-sm transition-colors'
                   />
                   <Button
                     onClick={handleSaveKey}
@@ -142,7 +142,7 @@ export function Options() {
                   <Button
                     onClick={handleRemoveKey}
                     variant='ghost'
-                    className='shrink-0 gap-1.5 rounded-full px-2.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
+                    className='text-muted-foreground hover:bg-destructive/10 hover:text-destructive shrink-0 gap-1.5 rounded-full px-2.5'
                     disabled={!apiKey}
                   >
                     <Trash2 className='mr-2 h-4 w-4' />
@@ -163,8 +163,8 @@ export function Options() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-                <Card className='rounded-lg border-primary/10 bg-primary/5 p-4'>
-                  <p className='text-sm leading-relaxed text-muted-foreground'>
+                <Card className='border-primary/10 bg-primary/5 rounded-lg p-4'>
+                  <p className='text-muted-foreground text-sm leading-relaxed'>
                     Your API key is stored locally in your browser and is only used to communicate with OpenAI's
                     servers. We never store or transmit your API key to any other servers.
                   </p>
@@ -184,7 +184,7 @@ export function Options() {
             href='https://github.com/aleksa-codes'
             target='_blank'
             rel='noopener noreferrer'
-            className='text-muted-foreground/60 transition-colors duration-200 hover:text-primary'
+            className='text-muted-foreground/60 hover:text-primary transition-colors duration-200'
           >
             created by <span className='font-semibold'>aleksa.codes</span>
           </a>

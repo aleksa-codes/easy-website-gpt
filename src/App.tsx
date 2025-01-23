@@ -156,8 +156,8 @@ function App() {
   };
 
   return (
-    <div className='flex h-[600px] w-[400px] flex-col overflow-hidden rounded-lg bg-background shadow-xl'>
-      <Card className='rounded-none border-x-0 border-b border-t-0 bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/50'>
+    <div className='bg-background flex h-[600px] w-[400px] flex-col overflow-hidden rounded-lg shadow-xl'>
+      <Card className='bg-card/50 supports-[backdrop-filter]:bg-card/50 rounded-none border-x-0 border-t-0 border-b backdrop-blur'>
         <div className='flex items-center justify-between p-4'>
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -165,10 +165,10 @@ function App() {
             className='flex items-center gap-2'
           >
             <div className='relative mx-auto h-10 w-10'>
-              <div className='h-full w-full rounded-full bg-gradient-to-br from-primary/20 to-primary/10 p-2'>
-                <Bot className='h-full w-full text-primary' />
+              <div className='from-primary/20 to-primary/10 h-full w-full rounded-full bg-gradient-to-br p-2'>
+                <Bot className='text-primary h-full w-full' />
               </div>
-              <div className='absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-background bg-green-500' />
+              <div className='border-background absolute right-0 bottom-0 h-3 w-3 rounded-full border-2 bg-green-500' />
             </div>
             <h1 className='text-lg font-semibold tracking-tight'>Easy WebsiteGPT</h1>
           </motion.div>
@@ -178,7 +178,7 @@ function App() {
                 variant='ghost'
                 size='icon'
                 onClick={resetConversation}
-                className='h-8 w-8 rounded-full hover:bg-muted'
+                className='hover:bg-muted h-8 w-8 rounded-full'
                 title='Reset conversation'
               >
                 <RotateCcw className='h-4 w-4' />
@@ -190,7 +190,7 @@ function App() {
               onSaveApiKey={saveApiKeyHandler}
               onRemoveApiKey={removeApiKeyHandler}
               trigger={
-                <Button variant='ghost' size='icon' className='h-8 w-8 rounded-full hover:bg-muted'>
+                <Button variant='ghost' size='icon' className='hover:bg-muted h-8 w-8 rounded-full'>
                   <Settings className='h-4 w-4' />
                 </Button>
               }
@@ -209,14 +209,14 @@ function App() {
           >
             <div className='space-y-4 text-center'>
               <div className='relative mx-auto h-16 w-16'>
-                <div className='h-full w-full rounded-full bg-gradient-to-br from-primary/20 to-primary/10 p-4'>
-                  <Bot className='h-full w-full text-primary' />
+                <div className='from-primary/20 to-primary/10 h-full w-full rounded-full bg-gradient-to-br p-4'>
+                  <Bot className='text-primary h-full w-full' />
                 </div>
-                <div className='absolute bottom-1 right-0 h-4 w-4 rounded-full border-2 border-background bg-green-500' />
+                <div className='border-background absolute right-0 bottom-1 h-4 w-4 rounded-full border-2 bg-green-500' />
               </div>
               <div className='space-y-2'>
-                <p className='text-lg font-medium text-muted-foreground'>Welcome to Easy WebsiteGPT!</p>
-                <p className='text-sm text-muted-foreground/60'>Ask me anything about this webpage.</p>
+                <p className='text-muted-foreground text-lg font-medium'>Welcome to Easy WebsiteGPT!</p>
+                <p className='text-muted-foreground/60 text-sm'>Ask me anything about this webpage.</p>
               </div>
             </div>
           </motion.div>
@@ -239,12 +239,12 @@ function App() {
         )}
       </AnimatePresence>
 
-      <Card className='rounded-none border-x-0 border-b-0 border-t bg-card/50 p-4 backdrop-blur supports-[backdrop-filter]:bg-card/50'>
+      <Card className='bg-card/50 supports-[backdrop-filter]:bg-card/50 rounded-none border-x-0 border-t border-b-0 p-4 backdrop-blur'>
         <div className='flex flex-col gap-2'>
           {messages.length > 0 && (
             <div className='flex items-center justify-between px-1'>
               <div className='flex items-center gap-2'>
-                <span className='text-xs text-muted-foreground'>
+                <span className='text-muted-foreground text-xs'>
                   Messages: {messages.length}/{MAX_MESSAGES}
                 </span>
                 {messages.length >= MAX_MESSAGES && (
@@ -259,7 +259,7 @@ function App() {
                   variant='ghost'
                   size='sm'
                   onClick={resetConversation}
-                  className='h-6 rounded-full px-2 text-xs text-muted-foreground hover:text-foreground'
+                  className='text-muted-foreground hover:text-foreground h-6 rounded-full px-2 text-xs'
                 >
                   <RotateCcw className='mr-1 h-3 w-3' />
                   New Chat
@@ -281,7 +281,7 @@ function App() {
               }
               onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
               disabled={loading || !apiKey || messages.length >= MAX_MESSAGES}
-              className='flex-1 rounded-full border-muted bg-background/50 px-4 shadow-sm transition-colors focus-visible:ring-primary/50'
+              className='border-muted bg-background/50 focus-visible:ring-primary/50 flex-1 rounded-full px-4 shadow-sm transition-colors'
             />
             <Button
               onClick={sendMessage}

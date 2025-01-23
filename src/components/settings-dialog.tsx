@@ -95,12 +95,12 @@ export function SettingsDialog({ apiKey, onApiKeyChange, onSaveApiKey, onRemoveA
       <DialogContent className='sm:max-w-md'>
         <DialogHeader className='space-y-2.5 pb-4'>
           <DialogTitle className='flex items-center gap-2.5 text-xl font-semibold'>
-            <div className='rounded-full bg-primary/10 p-1.5'>
-              <Key className='h-5 w-5 text-primary' />
+            <div className='bg-primary/10 rounded-full p-1.5'>
+              <Key className='text-primary h-5 w-5' />
             </div>
             Settings
           </DialogTitle>
-          <DialogDescription className='text-sm leading-relaxed text-muted-foreground'>
+          <DialogDescription className='text-muted-foreground text-sm leading-relaxed'>
             Enter your API key to start chatting with any webpage using OpenAI's GPT model
           </DialogDescription>
         </DialogHeader>
@@ -118,7 +118,7 @@ export function SettingsDialog({ apiKey, onApiKeyChange, onSaveApiKey, onRemoveA
                     href='https://platform.openai.com/api-keys'
                     target='_blank'
                     rel='noopener noreferrer'
-                    className='inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary transition-all hover:bg-primary/20'
+                    className='bg-primary/10 text-primary hover:bg-primary/20 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium transition-all'
                   >
                     <ExternalLink className='h-3 w-3' />
                     Get API Key
@@ -128,7 +128,7 @@ export function SettingsDialog({ apiKey, onApiKeyChange, onSaveApiKey, onRemoveA
                   onClick={handleRemove}
                   variant='ghost'
                   size='sm'
-                  className='h-7 gap-1.5 rounded-full px-2.5 text-xs font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
+                  className='text-muted-foreground hover:bg-destructive/10 hover:text-destructive h-7 gap-1.5 rounded-full px-2.5 text-xs font-medium'
                   disabled={!apiKey}
                 >
                   <Trash2 className='h-3.5 w-3.5' />
@@ -143,7 +143,7 @@ export function SettingsDialog({ apiKey, onApiKeyChange, onSaveApiKey, onRemoveA
                   value={inputValue}
                   onChange={(e) => handleKeyChange(e.target.value)}
                   placeholder='sk-...'
-                  className='flex-1 rounded-full border-muted-foreground/20 bg-muted/50 font-mono text-sm shadow-sm transition-colors placeholder:text-muted-foreground/50 focus-visible:border-primary/50 focus-visible:ring-primary/50'
+                  className='border-muted-foreground/20 bg-muted/50 placeholder:text-muted-foreground/50 focus-visible:border-primary/50 focus-visible:ring-primary/50 flex-1 rounded-full font-mono text-sm shadow-sm transition-colors'
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       handleSave();
@@ -178,8 +178,8 @@ export function SettingsDialog({ apiKey, onApiKeyChange, onSaveApiKey, onRemoveA
           </div>
 
           {/* Info Section */}
-          <div className='rounded-lg border border-primary/10 bg-primary/5 p-4'>
-            <p className='text-sm leading-relaxed text-muted-foreground'>
+          <div className='border-primary/10 bg-primary/5 rounded-lg border p-4'>
+            <p className='text-muted-foreground text-sm leading-relaxed'>
               Your API key is stored locally in your browser and is only used to communicate with OpenAI's servers. We
               never store or transmit your API key elsewhere.
             </p>
@@ -190,7 +190,7 @@ export function SettingsDialog({ apiKey, onApiKeyChange, onSaveApiKey, onRemoveA
             <Button
               variant='ghost'
               size='sm'
-              className='h-8 gap-1.5 rounded-full px-3 text-xs font-medium text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary'
+              className='text-muted-foreground hover:bg-primary/10 hover:text-primary h-8 gap-1.5 rounded-full px-3 text-xs font-medium transition-colors'
               onClick={openOptionsPage}
             >
               <ExternalLink className='h-3.5 w-3.5' />
@@ -201,7 +201,7 @@ export function SettingsDialog({ apiKey, onApiKeyChange, onSaveApiKey, onRemoveA
               href='https://github.com/aleksa-codes'
               target='_blank'
               rel='noopener noreferrer'
-              className='text-xs text-muted-foreground/60 transition-colors duration-200 hover:text-primary'
+              className='text-muted-foreground/60 hover:text-primary text-xs transition-colors duration-200'
             >
               created by <span className='font-semibold'>aleksa.codes</span>
             </a>
