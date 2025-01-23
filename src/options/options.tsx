@@ -129,7 +129,7 @@ export function Options() {
                     value={inputValue}
                     onChange={(e) => handleKeyChange(e.target.value)}
                     placeholder='sk-...'
-                    className='border-muted-foreground/20 bg-muted/50 placeholder:text-muted-foreground/50 focus-visible:border-primary/50 focus-visible:ring-primary/50 flex-1 rounded-full font-mono text-sm shadow-sm transition-colors'
+                    className='border-muted-foreground/20 bg-muted/50 placeholder:text-muted-foreground/50 focus-visible:border-primary/50 focus-visible:ring-primary/50 flex-1 rounded-full font-mono text-sm shadow-xs transition-colors'
                   />
                   <Button
                     onClick={handleSaveKey}

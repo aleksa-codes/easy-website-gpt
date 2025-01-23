@@ -36,7 +36,7 @@ const CodeBlock = ({
 }: HTMLProps<HTMLElement> & { inline?: boolean; className?: string }) => {
   if (inline) {
     return (
-      <code className='rounded bg-zinc-700 px-1.5 py-0.5 font-mono text-sm text-zinc-200' {...props}>
+      <code className='rounded-sm bg-zinc-700 px-1.5 py-0.5 font-mono text-sm text-zinc-200' {...props}>
         {children}
       </code>
     );
@@ -90,7 +90,7 @@ export function ChatMessage({ role, content }: ChatMessageProps) {
       )}
       <Card
         className={cn(
-          'max-w-[80%] rounded-2xl px-4 py-3 break-words shadow-sm transition-colors',
+          'max-w-[80%] rounded-2xl px-4 py-3 break-words shadow-xs transition-colors',
           {
             'bg-primary text-primary-foreground': !isAssistant,
             'bg-muted/50 hover:bg-muted/80': isAssistant,
