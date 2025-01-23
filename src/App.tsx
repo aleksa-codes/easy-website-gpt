@@ -157,7 +157,7 @@ function App() {
 
   return (
     <div className='bg-background flex h-[600px] w-[400px] flex-col overflow-hidden rounded-lg shadow-xl'>
-      <Card className='bg-card/50 supports-[backdrop-filter]:bg-card/50 rounded-none border-x-0 border-t-0 border-b backdrop-blur'>
+      <Card className='bg-card/50 supports-[backdrop-filter]:bg-card/50 rounded-none border-x-0 border-t-0 border-b backdrop-blur-sm'>
         <div className='flex items-center justify-between p-4'>
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -239,7 +239,7 @@ function App() {
         )}
       </AnimatePresence>
 
-      <Card className='bg-card/50 supports-[backdrop-filter]:bg-card/50 rounded-none border-x-0 border-t border-b-0 p-4 backdrop-blur'>
+      <Card className='bg-card/50 supports-[backdrop-filter]:bg-card/50 rounded-none border-x-0 border-t border-b-0 p-4 backdrop-blur-sm'>
         <div className='flex flex-col gap-2'>
           {messages.length > 0 && (
             <div className='flex items-center justify-between px-1'>
@@ -281,7 +281,7 @@ function App() {
               }
               onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
               disabled={loading || !apiKey || messages.length >= MAX_MESSAGES}
-              className='border-muted bg-background/50 focus-visible:ring-primary/50 flex-1 rounded-full px-4 shadow-sm transition-colors'
+              className='border-muted bg-background/50 focus-visible:ring-primary/50 flex-1 rounded-full px-4 shadow-xs transition-colors'
             />
             <Button
               onClick={sendMessage}
