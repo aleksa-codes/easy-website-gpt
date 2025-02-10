@@ -7,7 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Key, Trash2, Bot, ExternalLink } from 'lucide-react';
 import { saveApiKey, getApiKey } from '@/lib/storage';
 import { isValidOpenAIKey } from '@/lib/validate';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'motion/react';
 
 export function Options() {
@@ -15,7 +15,6 @@ export function Options() {
   const [inputValue, setInputValue] = useState('');
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const { toast } = useToast();
 
   useEffect(() => {
     const loadApiKey = async () => {
@@ -53,10 +52,8 @@ export function Options() {
 
     await saveApiKey(trimmedKey);
     setApiKey(trimmedKey);
-    toast({
-      title: 'API Key saved successfully',
+    toast('API Key saved successfully', {
       description: 'You can now start chatting with any webpage',
-      duration: 2000,
     });
     setShowError(false);
     setErrorMessage('');
@@ -66,10 +63,8 @@ export function Options() {
     await saveApiKey('');
     setApiKey('');
     setInputValue('');
-    toast({
-      title: 'API Key removed',
+    toast('API Key removed', {
       description: 'Your API key has been removed from storage',
-      duration: 2000,
     });
     setShowError(false);
   };

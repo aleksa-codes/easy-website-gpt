@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useToast } from '@/hooks/use-toast';
 import { Settings, Send, Loader2, Bot, RotateCcw, AlertTriangle } from 'lucide-react';
 import { saveApiKey, getApiKey, saveChatHistory, getChatHistory, clearChatHistory } from './lib/storage';
 import { getPageContent } from '@/lib/page-content';
@@ -11,6 +10,7 @@ import { ChatMessage } from '@/components/chat-message';
 import { SettingsDialog } from '@/components/settings-dialog';
 import { Card } from '@/components/ui/card';
 import { motion, AnimatePresence } from 'motion/react';
+import { toast } from 'sonner';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -49,7 +49,6 @@ function App() {
     metadata: {},
   });
   const [currentUrl, setCurrentUrl] = useState<string>('');
-  const { toast } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [streamingMessage, setStreamingMessage] = useState('');
@@ -78,20 +77,14 @@ function App() {
   const saveApiKeyHandler = async () => {
     if (apiKey) {
       await saveApiKey(apiKey);
-      toast({
-        title: 'API Key saved successfully',
-        duration: 2000,
-      });
+      toast('API Key saved successfully');
     }
   };
 
   const removeApiKeyHandler = async () => {
     await saveApiKey('');
     setApiKey('');
-    toast({
-      title: 'API Key removed',
-      duration: 2000,
-    });
+    toast('API Key removed');
   };
 
   const resetConversation = async () => {
@@ -99,10 +92,7 @@ function App() {
     if (currentUrl) {
       await clearChatHistory(currentUrl);
     }
-    toast({
-      title: 'Conversation reset',
-      duration: 2000,
-    });
+    toast('Conversation reset');
   };
 
   const scrollToBottom = () => {
@@ -139,10 +129,8 @@ function App() {
     } catch (error) {
       // Remove the placeholder message on error
       setMessages(updatedMessages);
-      toast({
-        title: 'Error',
+      toast('Error', {
         description: error instanceof Error ? error.message : 'An unknown error occurred',
-        duration: 2000,
       });
     } finally {
       setLoading(false);
