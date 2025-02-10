@@ -84,7 +84,6 @@ function App() {
   const removeApiKeyHandler = async () => {
     await saveApiKey('');
     setApiKey('');
-    toast('API Key removed');
   };
 
   const resetConversation = async () => {
