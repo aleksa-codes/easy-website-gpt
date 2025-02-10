@@ -15,7 +15,7 @@ import { isValidOpenAIKey } from '@/lib/validate';
 import { useState, useEffect } from 'react';
 import { saveApiKey } from '@/lib/storage';
 import { motion, AnimatePresence } from 'motion/react';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 interface SettingsDialogProps {
   apiKey: string;
@@ -26,7 +26,6 @@ interface SettingsDialogProps {
 }
 
 export function SettingsDialog({ apiKey, onApiKeyChange, onSaveApiKey, onRemoveApiKey, trigger }: SettingsDialogProps) {
-  const { toast } = useToast();
   const [inputValue, setInputValue] = useState(apiKey);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -60,10 +59,8 @@ export function SettingsDialog({ apiKey, onApiKeyChange, onSaveApiKey, onRemoveA
     setShowError(false);
     setErrorMessage('');
 
-    toast({
-      title: 'API Key saved successfully',
+    toast('API Key saved successfully', {
       description: 'You can now start chatting with any webpage',
-      duration: 2000,
     });
   };
 
@@ -74,10 +71,8 @@ export function SettingsDialog({ apiKey, onApiKeyChange, onSaveApiKey, onRemoveA
     setShowError(false);
     setErrorMessage('');
 
-    toast({
-      title: 'API Key removed',
+    toast('API Key removed', {
       description: 'Your API key has been removed from storage',
-      duration: 2000,
     });
   };
 
