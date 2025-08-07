@@ -102,17 +102,18 @@ export function ChatMessage({ role, content }: ChatMessageProps) {
           isEmpty ? (
             <LoadingDots />
           ) : (
-            <MemoizedReactMarkdown
-              className='prose prose-sm dark:prose-invert prose-code:after:hidden prose-code:before:hidden max-w-none'
-              rehypePlugins={[rehypeRaw, rehypeSanitize]}
-              components={{
-                code: CodeBlock,
-                a: Link,
-                p: Paragraph,
-              }}
-            >
-              {content}
-            </MemoizedReactMarkdown>
+            <div className='prose prose-sm dark:prose-invert prose-code:after:hidden prose-code:before:hidden max-w-none'>
+              <MemoizedReactMarkdown
+                rehypePlugins={[rehypeRaw, rehypeSanitize]}
+                components={{
+                  code: CodeBlock,
+                  a: Link,
+                  p: Paragraph,
+                }}
+              >
+                {content}
+              </MemoizedReactMarkdown>
+            </div>
           )
         ) : (
           <p className='text-sm leading-relaxed whitespace-pre-wrap'>{content}</p>

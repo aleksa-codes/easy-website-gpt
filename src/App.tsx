@@ -32,6 +32,15 @@ function App() {
     //   content:
     //     "This is a Chrome extension that allows you to chat with an AI about any webpage you're viewing. Simply enter your question in the input box below, and I'll analyze the page content to provide relevant answers.\n\nTo get started, you'll need to add your OpenAI API key in the settings (click the gear icon in the top right).",
     // },
+    // {
+    //   role: 'user',
+    //   content: 'How does this website work?',
+    // },
+    // {
+    //   role: 'assistant',
+    //   content:
+    //     "This is a Chrome extension that allows you to chat with an AI about any webpage you're viewing. Simply enter your question in the input box below, and I'll analyze the page content to provide relevant answers.\n\nTo get started, you'll need to add your OpenAI API key in the settings (click the gear icon in the top right).",
+    // },
   ]);
   const [input, setInput] = useState('');
   const [pageData, setPageData] = useState<{
@@ -108,10 +117,9 @@ function App() {
     setInput('');
     setLoading(true);
     isStreaming.current = true;
-    setStreamingMessage(''); // Reset streaming message
+    setStreamingMessage('');
 
     try {
-      // Add a placeholder assistant message for streaming
       const placeholderMessage: Message = { role: 'assistant', content: '' };
       setMessages([...updatedMessages, placeholderMessage]);
 
@@ -120,14 +128,12 @@ function App() {
         scrollToBottom();
       });
 
-      // Update the final message with proper typing
       const assistantMessage: Message = { role: 'assistant', content: response };
       const finalMessages: Message[] = [...updatedMessages, assistantMessage];
       setMessages(finalMessages);
       await saveChatHistory(pageData.url, finalMessages);
     } catch (error) {
-      // Remove the placeholder message on error
-      setMessages(updatedMessages);
+      setMessages(updatedMessages); // Revert to messages before the failed attempt
       toast('Error', {
         description: error instanceof Error ? error.message : 'An unknown error occurred',
       });
@@ -144,7 +150,7 @@ function App() {
 
   return (
     <div className='bg-background flex h-[600px] w-[400px] flex-col overflow-hidden rounded-lg shadow-xl'>
-      <Card className='bg-card/50 supports-[backdrop-filter]:bg-card/50 rounded-none border-x-0 border-t-0 border-b backdrop-blur-sm'>
+      <Card className='bg-card/50 supports-[backdrop-filter]:bg-card/50 flex-shrink-0 rounded-none border-x-0 border-t-0 border-b backdrop-blur-sm'>
         <div className='flex items-center justify-between p-4'>
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -186,47 +192,47 @@ function App() {
         </div>
       </Card>
 
-      <AnimatePresence mode='wait'>
-        {messages.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className='flex flex-1 items-center justify-center p-4'
-          >
-            <div className='space-y-4 text-center'>
-              <div className='relative mx-auto h-16 w-16'>
-                <div className='from-primary/20 to-primary/10 h-full w-full rounded-full bg-gradient-to-br p-4'>
-                  <Bot className='text-primary h-full w-full' />
+      <div className='min-h-0 flex-1'>
+        <AnimatePresence mode='wait'>
+          {messages.length === 0 ? (
+            <motion.div
+              key='empty-state' // Key for AnimatePresence
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className='flex h-full items-center justify-center p-4'
+            >
+              <div className='space-y-4 text-center'>
+                <div className='relative mx-auto h-16 w-16'>
+                  <div className='from-primary/20 to-primary/10 h-full w-full rounded-full bg-gradient-to-br p-4'>
+                    <Bot className='text-primary h-full w-full' />
+                  </div>
+                  <div className='border-background absolute right-0 bottom-1 h-4 w-4 rounded-full border-2 bg-green-500' />
                 </div>
-                <div className='border-background absolute right-0 bottom-1 h-4 w-4 rounded-full border-2 bg-green-500' />
+                <div className='space-y-2'>
+                  <p className='text-muted-foreground text-lg font-medium'>Welcome to Easy WebsiteGPT!</p>
+                  <p className='text-muted-foreground/60 text-sm'>Ask me anything about this webpage.</p>
+                </div>
               </div>
-              <div className='space-y-2'>
-                <p className='text-muted-foreground text-lg font-medium'>Welcome to Easy WebsiteGPT!</p>
-                <p className='text-muted-foreground/60 text-sm'>Ask me anything about this webpage.</p>
+            </motion.div>
+          ) : (
+            <ScrollArea key='chat-view' className='h-full w-full'>
+              <div className='space-y-4 p-4'>
+                {messages.map((message, index) => (
+                  <ChatMessage
+                    key={index}
+                    {...message}
+                    content={index === messages.length - 1 && isStreaming.current ? streamingMessage : message.content}
+                  />
+                ))}
+                <div ref={messagesEndRef} />
               </div>
-            </div>
-          </motion.div>
-        ) : (
-          <ScrollArea className='flex-1 p-4 pb-0'>
-            <div className='space-y-4 pb-4'>
-              {messages.map((message, index) => (
-                <ChatMessage
-                  key={index}
-                  {...message}
-                  content={
-                    // Show streaming content for the last message if it's streaming
-                    index === messages.length - 1 && isStreaming.current ? streamingMessage : message.content
-                  }
-                />
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
-          </ScrollArea>
-        )}
-      </AnimatePresence>
+            </ScrollArea>
+          )}
+        </AnimatePresence>
+      </div>
 
-      <Card className='bg-card/50 supports-[backdrop-filter]:bg-card/50 rounded-none border-x-0 border-t border-b-0 p-4 backdrop-blur-sm'>
+      <Card className='bg-card/50 supports-[backdrop-filter]:bg-card/50 flex-shrink-0 rounded-none border-x-0 border-t border-b-0 p-4 backdrop-blur-sm'>
         <div className='flex flex-col gap-2'>
           {messages.length > 0 && (
             <div className='flex items-center justify-between px-1'>
