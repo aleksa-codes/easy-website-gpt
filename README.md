@@ -30,7 +30,7 @@ Easy WebsiteGPT is a Chrome extension that allows you to chat with any webpage u
 ### Prerequisites
 
 - Node.js (v16 or higher)
-- npm or yarn
+- npm or bun
 - Chrome browser
 - OpenAI API key ([Get one here](https://platform.openai.com/api-keys))
 
@@ -48,7 +48,7 @@ cd easy-website-gpt
 ```bash
 npm install
 # or
-yarn install
+bun install
 ```
 
 3. Build the extension:
@@ -56,7 +56,7 @@ yarn install
 ```bash
 npm run build
 # or
-yarn build
+bun run build
 ```
 
 4. Load the extension in Chrome:
