@@ -328,7 +328,7 @@ export function Popup() {
   }
 
   return (
-    <div className="flex h-[600px] w-[400px] flex-col overflow-hidden rounded-xl border border-border/40 bg-background shadow-2xl">
+    <div className="flex h-[600px] w-[400px] flex-col overflow-hidden bg-background">
       {/* Premium Header */}
       <header className="relative z-10 flex h-14 shrink-0 items-center justify-between border-b bg-background/85 px-4 backdrop-blur-md">
         <motion.div
