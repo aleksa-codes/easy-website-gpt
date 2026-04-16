@@ -274,7 +274,7 @@ export function Options() {
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       {/* Premium Header */}
       <header className="sticky top-0 z-30 border-b bg-background/85 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 sm:px-6">
+        <div className="flex h-16 w-full items-center justify-between px-4 sm:px-6">
           {/* Logo & Title */}
           <div className="flex flex-1 items-center justify-start gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
