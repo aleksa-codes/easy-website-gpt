@@ -1,4 +1,4 @@
-# Easy WebsiteGPT (WXT)
+# 🤖 Easy WebsiteGPT (WXT)
 
 > April 2026 update: migrated from CRXJS and improved with a cleaner architecture and updated UI.
 
