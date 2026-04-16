@@ -1,6 +1,7 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Key, Trash2, AlertCircle, ExternalLink } from 'lucide-react';
+import { useEffect, useMemo, useState, type ReactNode } from "react"
+
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -8,201 +9,318 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { isValidOpenAIKey } from '@/lib/validate';
-import { useState, useEffect } from 'react';
-import { saveApiKey } from '@/lib/storage';
-import { motion, AnimatePresence } from 'motion/react';
-import { toast } from 'sonner';
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
+import { PROVIDERS } from "@/lib/models"
+import type { AIProvider, AppSettings } from "@/lib/types"
+import { getApiKeyValidationMessage, isValidApiKey } from "@/lib/validate"
+import { AlertCircle, ExternalLink, Key, Trash2 } from "lucide-react"
+import { AnimatePresence, motion } from "motion/react"
 
 interface SettingsDialogProps {
-  apiKey: string;
-  onApiKeyChange: (key: string) => void;
-  onSaveApiKey: () => void;
-  onRemoveApiKey: () => void;
-  trigger: React.ReactNode;
+  settings: AppSettings
+  apiKeys: Partial<Record<AIProvider, string>>
+  onProviderChange: (provider: AIProvider) => Promise<void>
+  onModelChange: (provider: AIProvider, model: string) => Promise<void>
+  onSaveApiKey: (provider: AIProvider, apiKey: string) => Promise<void>
+  onRemoveApiKey: (provider: AIProvider) => Promise<void>
+  trigger: ReactNode
 }
 
-export function SettingsDialog({ apiKey, onApiKeyChange, onSaveApiKey, onRemoveApiKey, trigger }: SettingsDialogProps) {
-  const [inputValue, setInputValue] = useState(apiKey);
-  const [showError, setShowError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+export function SettingsDialog({
+  settings,
+  apiKeys,
+  onProviderChange,
+  onModelChange,
+  onSaveApiKey,
+  onRemoveApiKey,
+  trigger,
+}: SettingsDialogProps) {
+  const [inputValue, setInputValue] = useState("")
+  const [showError, setShowError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
+  const [isSaving, setIsSaving] = useState(false)
 
-  const handleKeyChange = (value: string) => {
-    setInputValue(value);
-    if (showError) {
-      setShowError(false);
-      setErrorMessage('');
-    }
-  };
-
-  const handleSave = async () => {
-    const trimmedKey = inputValue.trim();
-
-    if (trimmedKey.length === 0) {
-      setShowError(true);
-      setErrorMessage('API key cannot be empty');
-      return;
-    }
-
-    if (!isValidOpenAIKey(trimmedKey)) {
-      setShowError(true);
-      setErrorMessage('Invalid API key format. Please enter a valid OpenAI API key');
-      return;
-    }
-
-    await saveApiKey(trimmedKey);
-    onApiKeyChange(trimmedKey);
-    onSaveApiKey();
-    setShowError(false);
-    setErrorMessage('');
-
-    toast('API Key saved successfully', {
-      description: 'You can now start chatting with any webpage',
-    });
-  };
-
-  const handleRemove = async () => {
-    await saveApiKey('');
-    setInputValue('');
-    onRemoveApiKey();
-    setShowError(false);
-    setErrorMessage('');
-
-    toast('API Key removed', {
-      description: 'Your API key has been removed from storage',
-    });
-  };
-
-  const openOptionsPage = () => {
-    chrome.runtime.openOptionsPage();
-  };
+  const provider = settings.selectedProvider
+  const providerConfig = PROVIDERS[provider]
+  const savedKey = apiKeys[provider] ?? ""
+  const selectedModel = settings.selectedModelByProvider[provider]
 
   useEffect(() => {
-    setInputValue(apiKey);
-  }, [apiKey]);
+    setInputValue(savedKey)
+    setShowError(false)
+    setErrorMessage("")
+  }, [savedKey, provider])
+
+  const groupedModels = useMemo(() => {
+    const latest = providerConfig.models.filter(
+      (model) => model.tier === "latest"
+    )
+    const balanced = providerConfig.models.filter(
+      (model) => model.tier === "balanced"
+    )
+    const cheap = providerConfig.models.filter(
+      (model) => model.tier === "cheap"
+    )
+    return { latest, balanced, cheap }
+  }, [providerConfig.models])
+
+  async function handleSaveKey() {
+    const trimmed = inputValue.trim()
+    if (!trimmed) {
+      setShowError(true)
+      setErrorMessage("API key cannot be empty.")
+      return
+    }
+
+    if (!isValidApiKey(provider, trimmed)) {
+      setShowError(true)
+      setErrorMessage(getApiKeyValidationMessage(provider))
+      return
+    }
+
+    setIsSaving(true)
+    try {
+      await onSaveApiKey(provider, trimmed)
+      setShowError(false)
+      setErrorMessage("")
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  async function handleRemoveKey() {
+    setIsSaving(true)
+    try {
+      await onRemoveApiKey(provider)
+      setInputValue("")
+      setShowError(false)
+      setErrorMessage("")
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  function openOptionsPage() {
+    if (typeof chrome !== "undefined" && chrome.runtime?.openOptionsPage) {
+      chrome.runtime.openOptionsPage()
+    }
+  }
 
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className='sm:max-w-md'>
-        <DialogHeader className='space-y-2.5 pb-4'>
-          <DialogTitle className='flex items-center gap-2.5 text-xl font-semibold'>
-            <div className='bg-primary/10 rounded-full p-1.5'>
-              <Key className='text-primary h-5 w-5' />
+      <DialogContent className="gap-0 overflow-hidden p-0 sm:max-w-[425px]">
+        <div className="p-5 pb-4">
+          <DialogHeader className="space-y-1.5">
+            <DialogTitle className="flex items-center gap-2 text-lg">
+              <Key className="size-4 text-primary" />
+              AI Settings
+            </DialogTitle>
+            <DialogDescription className="text-xs">
+              Configure your AI provider and API key for this extension.
+            </DialogDescription>
+          </DialogHeader>
+        </div>
+
+        <div className="space-y-4 px-5">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="provider" className="text-xs">
+                Provider
+              </Label>
+              <Select
+                onValueChange={(value) => {
+                  void onProviderChange(value as AIProvider)
+                }}
+                value={provider}
+              >
+                <SelectTrigger id="provider" className="h-8 text-xs">
+                  <SelectValue placeholder="Select provider" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="openai" className="text-xs">
+                    OpenAI
+                  </SelectItem>
+                  <SelectItem value="anthropic" className="text-xs">
+                    Anthropic
+                  </SelectItem>
+                  <SelectItem value="google" className="text-xs">
+                    Google AI
+                  </SelectItem>
+                  <SelectItem value="groq" className="text-xs">
+                    Groq
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            Settings
-          </DialogTitle>
-          <DialogDescription className='text-muted-foreground text-sm leading-relaxed'>
-            Enter your API key to start chatting with any webpage using OpenAI's GPT model
-          </DialogDescription>
-        </DialogHeader>
 
-        <div className='space-y-5'>
-          {/* API Key Section */}
-          <div className='space-y-3'>
-            <div className='space-y-2.5'>
-              <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-2'>
-                  <Label htmlFor='apiKey' className='text-sm font-medium'>
-                    API Key
-                  </Label>
-                  <a
-                    href='https://platform.openai.com/api-keys'
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    className='bg-primary/10 text-primary hover:bg-primary/20 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium transition-all'
-                  >
-                    <ExternalLink className='h-3 w-3' />
-                    Get API Key
-                  </a>
-                </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="model" className="text-xs">
+                Model
+              </Label>
+              <Select
+                onValueChange={(value) => {
+                  void onModelChange(provider, value)
+                }}
+                value={selectedModel}
+              >
+                <SelectTrigger id="model" className="h-8 text-xs">
+                  <SelectValue placeholder="Select model" />
+                </SelectTrigger>
+                <SelectContent>
+                  {groupedModels.latest.map((model) => (
+                    <SelectItem
+                      key={model.value}
+                      value={model.value}
+                      className="text-xs"
+                    >
+                      {model.label}
+                    </SelectItem>
+                  ))}
+                  {groupedModels.balanced.length > 0 && (
+                    <Separator className="my-1" />
+                  )}
+                  {groupedModels.balanced.map((model) => (
+                    <SelectItem
+                      key={model.value}
+                      value={model.value}
+                      className="text-xs"
+                    >
+                      {model.label}
+                    </SelectItem>
+                  ))}
+                  {groupedModels.cheap.length > 0 && (
+                    <Separator className="my-1" />
+                  )}
+                  {groupedModels.cheap.map((model) => (
+                    <SelectItem
+                      key={model.value}
+                      value={model.value}
+                      className="text-xs"
+                    >
+                      {model.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="apiKey" className="text-xs">
+                {providerConfig.apiKeyLabel}
+              </Label>
+              <a
+                className="flex items-center gap-1 text-[10px] font-medium text-primary hover:underline"
+                href={providerConfig.docsUrl}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Get API Key
+                <ExternalLink className="size-3" />
+              </a>
+            </div>
+
+            <div className="flex gap-1.5">
+              <Input
+                autoCapitalize="off"
+                autoCorrect="off"
+                id="apiKey"
+                className="h-8 font-mono text-xs"
+                onChange={(event) => {
+                  setInputValue(event.target.value)
+                  if (showError) {
+                    setShowError(false)
+                    setErrorMessage("")
+                  }
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    void handleSaveKey()
+                  }
+                }}
+                placeholder="Paste API key here..."
+                spellCheck={false}
+                type="password"
+                value={inputValue}
+              />
+              <Button
+                className="h-8 px-3 text-xs"
+                disabled={
+                  isSaving ||
+                  !inputValue.trim() ||
+                  inputValue.trim() === savedKey
+                }
+                onClick={() => {
+                  void handleSaveKey()
+                }}
+              >
+                Save
+              </Button>
+              {savedKey && (
                 <Button
-                  onClick={handleRemove}
-                  variant='ghost'
-                  size='sm'
-                  className='text-muted-foreground hover:bg-destructive/10 hover:text-destructive h-7 gap-1.5 rounded-full px-2.5 text-xs font-medium'
-                  disabled={!apiKey}
-                >
-                  <Trash2 className='h-3.5 w-3.5' />
-                  Remove
-                </Button>
-              </div>
-
-              <div className='flex gap-2'>
-                <Input
-                  id='apiKey'
-                  type='password'
-                  value={inputValue}
-                  onChange={(e) => handleKeyChange(e.target.value)}
-                  placeholder='sk-...'
-                  className='border-muted-foreground/20 bg-muted/50 placeholder:text-muted-foreground/50 focus-visible:border-primary/50 focus-visible:ring-primary/50 flex-1 rounded-full font-mono text-sm shadow-xs transition-colors'
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleSave();
-                    }
+                  className="h-8 w-8 p-0"
+                  disabled={isSaving}
+                  onClick={() => {
+                    void handleRemoveKey()
                   }}
-                />
-                <Button
-                  onClick={handleSave}
-                  size='default'
-                  className='rounded-full px-4 transition-all hover:scale-105 hover:shadow-md'
-                  disabled={!inputValue.trim() || inputValue === apiKey}
+                  variant="ghost"
                 >
-                  Save
+                  <Trash2 className="size-3.5 text-muted-foreground hover:text-destructive" />
                 </Button>
-              </div>
+              )}
             </div>
 
             <AnimatePresence>
               {showError && (
                 <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, height: "auto", marginTop: 8 }}
+                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                  className="overflow-hidden"
                 >
-                  <Alert variant='destructive' className='rounded-lg py-2'>
-                    <AlertCircle className='h-4 w-4' />
-                    <AlertDescription className='text-xs'>{errorMessage}</AlertDescription>
+                  <Alert
+                    variant="destructive"
+                    className="h-auto min-h-0 px-3 py-2"
+                  >
+                    <AlertCircle className="size-3.5" />
+                    <AlertDescription className="ml-2 text-xs">
+                      {errorMessage}
+                    </AlertDescription>
                   </Alert>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
+        </div>
 
-          {/* Info Section */}
-          <div className='border-primary/10 bg-primary/5 rounded-lg border p-4'>
-            <p className='text-muted-foreground text-sm leading-relaxed'>
-              Your API key is stored locally in your browser and is only used to communicate with OpenAI's servers. We
-              never store or transmit your API key elsewhere.
-            </p>
-          </div>
+        <div className="mt-4 flex items-center justify-between border-t bg-muted/40 p-4">
+          <Button
+            className="h-7 px-2.5 text-[11px]"
+            onClick={openOptionsPage}
+            size="sm"
+            variant="secondary"
+          >
+            <ExternalLink className="mr-1.5 size-3" />
+            Advanced Options
+          </Button>
 
-          {/* Footer */}
-          <div className='flex items-center justify-between border-t pt-4'>
-            <Button
-              variant='ghost'
-              size='sm'
-              className='text-muted-foreground hover:bg-primary/10 hover:text-primary h-8 gap-1.5 rounded-full px-3 text-xs font-medium transition-colors'
-              onClick={openOptionsPage}
-            >
-              <ExternalLink className='h-3.5 w-3.5' />
-              Advanced Settings
-            </Button>
-
-            <a
-              href='https://github.com/aleksa-codes'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='text-muted-foreground/60 hover:text-primary text-xs transition-colors duration-200'
-            >
-              created by <span className='font-semibold'>aleksa.codes</span>
-            </a>
-          </div>
+          <p className="text-[10px] text-muted-foreground/60">
+            Keys are stored locally.
+          </p>
         </div>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

@@ -1,125 +1,97 @@
-# Easy WebsiteGPT 🤖
+# Easy WebsiteGPT (WXT)
 
-Easy WebsiteGPT is a Chrome extension that allows you to chat with any webpage using OpenAI's GPT model. Simply install the extension, add your OpenAI API key, and start asking questions about the content of any webpage you're viewing.
+> April 2026 update: migrated from CRXJS and improved with a cleaner architecture and updated UI.
 
-![Easy WebsiteGPT Screenshot](/public/screenshot.png)
+Chat with the currently opened webpage using multiple AI providers, with strict page-grounded answers and persistent per-URL chat history.
 
-## ✨ Features
+[![WXT](https://img.shields.io/badge/WXT-MV3-0ea5e9)](https://wxt.dev/)
+[![React](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)](https://react.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38bdf8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vercel AI SDK](https://img.shields.io/badge/AI_SDK-v6-111827)](https://ai-sdk.dev/)
+[![Bun](https://img.shields.io/badge/Bun-Package_Manager-f9f1e1)](https://bun.sh/)
 
-- 🔍 Chat with any webpage using OpenAI's GPT model
-- 💬 Real-time streaming responses
-- 🎨 Beautiful and responsive UI with animations
-- 💾 Local storage for chat history and settings
-- 📱 Compact and user-friendly interface
-- 🔄 Conversation reset functionality
-- ⚙️ Advanced settings page
+## Features
 
-## 🛠️ Tech Stack
+- Page-grounded chat: responses are instructed to use only the current webpage content.
+- Multi-provider support: OpenAI, Anthropic, Google AI, and Groq.
+- Streaming responses: real-time token streaming with reasoning parts where available.
+- Better page extraction: Readability + Linkedom + Turndown for cleaner context.
+- Per-page history: conversation state is saved by page URL and restored automatically.
+- Built-in settings: provider/model selection, API key management, and TTS preferences.
+- Modern extension UI: React 19 + Tailwind v4 + shadcn/ui primitives.
 
-- **Frontend Framework**: React + TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: shadcn/ui
-- **Animations**: Framer Motion
-- **Markdown Rendering**: React Markdown
-- **API Integration**: OpenAI API
-- **Build Tool**: Vite
-- **Extension Framework**: Chrome Extensions API
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js (v16 or higher)
-- npm or bun
-- Chrome browser
-- OpenAI API key ([Get one here](https://platform.openai.com/api-keys))
-
-### Installation
-
-1. Clone the repository:
+## Quick Start
 
 ```bash
-git clone https://github.com/aleksa-codes/easy-website-gpt.git
-cd easy-website-gpt
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-# or
+# Install dependencies
 bun install
+
+# Run extension in dev mode
+bun run dev
 ```
 
-3. Build the extension:
+Then load the extension from `.output/chrome-mv3` in `chrome://extensions` (Developer Mode -> Load unpacked).
 
-```bash
-npm run build
-# or
-bun run build
+## Scripts
+
+| Command                 | Description                         |
+| ----------------------- | ----------------------------------- |
+| `bun run dev`           | Run extension in dev mode           |
+| `bun run dev:firefox`   | Run extension in dev mode (Firefox) |
+| `bun run build`         | Build production bundle             |
+| `bun run build:firefox` | Build production bundle (Firefox)   |
+| `bun run zip`           | Create production zip               |
+| `bun run zip:firefox`   | Create production zip (Firefox)     |
+| `bun run typecheck`     | Run TypeScript checks               |
+| `bun run format`        | Format repository with Prettier     |
+
+## Project Structure
+
+```txt
+src/
+├─ entrypoints/         # background + popup/options entry files
+├─ features/            # screen-level React features
+├─ components/          # chat/settings components and shared UI
+├─ components/ui/       # shadcn-style UI primitives
+├─ lib/                 # AI pipeline, extraction, models, storage, types
+└─ assets/              # global Tailwind stylesheet
 ```
 
-4. Load the extension in Chrome:
-   - Open Chrome and navigate to `chrome://extensions/`
-   - Enable "Developer mode" in the top right
-   - Click "Load unpacked" in the top left
-   - Select the `dist` folder from the project directory
+## How It Works
 
-### Configuration
+1. Popup requests the active tab content through `chrome.scripting.executeScript`.
+2. Content is cleaned with Readability and converted to markdown context.
+3. `useChat` streams model output using AI SDK v6 transport.
+4. Provider/model routing happens in the shared AI pipeline.
+5. Settings/API keys are stored in `chrome.storage.sync`; chat history is stored in `chrome.storage.local` keyed by URL.
 
-1. Get your OpenAI API key from [OpenAI's platform](https://platform.openai.com/api-keys)
-2. Click the extension icon in Chrome
-3. Open settings (gear icon)
-4. Enter your OpenAI API key
-5. Click "Save Key"
-6. Start chatting with any webpage!
+## AI Providers
 
-## 💡 Usage
+- OpenAI
+- Anthropic
+- Google AI
+- Groq
 
-1. Navigate to any webpage you want to chat about
-2. Click the Easy WebsiteGPT extension icon
-3. Type your question in the input field
-4. Press Enter or click the Send button
-5. Receive AI-powered responses based on the page content
+Each provider requires its own API key in Settings.
 
-### Features in Detail
+## Load In Chrome
 
-- **Smart Content Processing**: Automatically extracts and processes relevant content from webpages
-- **Streaming Responses**: See the AI's response in real-time as it's being generated
-- **Chat History**: Conversations are saved per webpage and persist between sessions
-- **Message Limit**: Maximum of 20 messages per conversation to ensure optimal performance
-- **Reset Conversation**: Clear the current conversation with one click
-- **Advanced Settings**: Configure your API key and other settings in the options page
+1. Run `bun run build`.
+2. Open `chrome://extensions`.
+3. Enable Developer Mode.
+4. Click Load unpacked.
+5. Select `.output/chrome-mv3`.
 
-## 🔒 Privacy & Security
+## Tech Stack
 
-- API keys are stored securely in Chrome's storage system
-- Page content is processed locally before being sent to OpenAI
-- No data is stored on external servers
-- You have full control over your data with easy clear/reset options
+- [WXT](https://wxt.dev/) for MV3 extension tooling
+- [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS v4](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/)
+- [Vercel AI SDK v6](https://ai-sdk.dev/) with provider SDKs
+- [@mozilla/readability](https://www.npmjs.com/package/@mozilla/readability), [linkedom](https://www.npmjs.com/package/linkedom), [turndown](https://www.npmjs.com/package/turndown)
+- [Bun](https://bun.sh/) for package management and scripts
 
-## 🤝 Contributing
+## License
 
-Contributions are welcome! Here's how you can help:
-
-1. Fork the repository
-2. Create your feature branch: `git checkout -b feature/AmazingFeature`
-3. Commit your changes: `git commit -m 'Add some AmazingFeature'`
-4. Push to the branch: `git push origin feature/AmazingFeature`
-5. Open a Pull Request
-
-### Development Guidelines
-
-- Follow the existing code style and conventions
-- Write clear commit messages
-- Add appropriate documentation
-- Test your changes thoroughly
-- Update the README if needed
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-<p align="center">Made with ❤️ by <a href="https://github.com/aleksa-codes">aleksa.codes</a></p>
+MIT License. See [LICENSE](LICENSE) for details.
