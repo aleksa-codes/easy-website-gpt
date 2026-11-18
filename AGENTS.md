@@ -11,7 +11,7 @@ It lets users chat with the currently visited webpage using multiple AI provider
 - React 19 + TypeScript
 - Tailwind CSS v4 via `@tailwindcss/vite`
 - shadcn/ui components
-- AI SDK v6 (`ai`, `@ai-sdk/react`) + provider SDKs
+- AI SDK v7 (`ai`, `@ai-sdk/react`) + provider SDKs
 - Bun package manager (`bun.lock`)
 
 ## Core Architecture
@@ -27,7 +27,7 @@ It lets users chat with the currently visited webpage using multiple AI provider
 - AI pipeline: `src/lib/ai.ts`
   - Multi-provider model routing.
   - `streamText` + UI message streaming response.
-  - Groq reasoning handling (`reasoningFormat` + extraction middleware).
+  - Groq reasoning handling via middleware that extracts `<think>` text.
 - Page extraction: `src/lib/page-content.ts`, `src/lib/scrape.ts`
   - Extract page HTML via `chrome.scripting.executeScript`.
   - Clean article extraction with Readability + Linkedom.
@@ -50,7 +50,7 @@ Defined in `src/lib/types.ts`:
 
 1. Preserve the product intent: answer questions about the **current webpage content**, not general knowledge.
 2. Keep page extraction clean and robust; prefer improvements that reduce boilerplate/noise in extracted content.
-3. Maintain AI SDK v6 patterns (`useChat`, `UIMessage.parts`, stream response helpers).
+3. Maintain AI SDK v7 patterns (`useChat`, `UIMessage.parts`, stream response helpers).
 4. Preserve multi-provider behavior and model validation in `src/lib/models.ts`.
 5. Prefer `@/` imports (maps to `src/`).
 6. Keep architecture simple and functional; avoid unnecessary service/object layers.
