@@ -16,6 +16,7 @@ export default defineConfig({
     permissions: ["activeTab", "storage", "scripting"],
     action: {
       default_title: "Easy WebsiteGPT",
+      default_icon: { "16": "icon/16.png", "32": "icon/32.png" },
     },
     icons: {
       "16": "icon/16.png",
